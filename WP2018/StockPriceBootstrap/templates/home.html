@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Stock Price</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="../static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../static/css/index.css" rel="stylesheet">
+
+  </head>
+  <body>
+
+    <div class="jumbotron jumbotron-fluid" id="HomeSection">
+        <h1 class="jumbotronTextOnImages text-center" id="JumbotronHeading">관심 주식 가격 동향</h1>
+        <p class="jumbotronTextOnImages" id="JumbotronPara">아래의 30 종목 중 관심 있는 종목의 가격 변동을 알아 본다</p>
+        <table class="jumbotronTextOnImages"  id="JumbotronTable" border="1" style="width: 80%">
+          <tbody>
+            {% for st in stockNames %}
+            {% if loop.index0 is divisibleby 6 %}
+            <tr>
+            {% endif %}
+            <td style="width: 13.3%; padding-left: 10px">
+            <input class="btn btn-transparent" type="button" value={{st}} onclick="selectStock(this)">
+            </td>
+            {% if loop.index is divisibleby 6 %}
+            </tr>
+            {% endif %}
+            {% endfor %}
+          </tbody>
+        </table>
+        <img id="JumbotronImage" src="../static/img/seorak.jpg" />
+    </div>
+
+    <div class="container">
+      <div class="row">
+        <form class="form-inline">
+        <div class="form-group">
+          <input type="button" class="btn btn-primary" value="선택 종목" disabled>
+          <input id="selList" class="form-control" type="text" value="" readonly size="100"> 
+        </div>
+        </form>
+        <br>
+        <input type="button" class="btn btn-info" value="Show Chart" onclick="showChart()">
+        <input type="button" class="btn btn-primary" value="Clear List" onclick="clearList()">
+      </div>
+      <div class="row">
+        <div id="svgFig1">        
+        </div>
+      </div>
+    </div>
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="../static/js/jquery-1.11.3.js"></script>
+    <script src="../static/js/bootstrap.min.js"></script>
+    <script>
+    var selList = [];
+    var selQuery = '';
+    function selectStock(btnObj) {
+    	var val = btnObj.value;
+    	var pos = selList.indexOf(val) 
+    	if ( pos != -1) {
+    		selList.splice(pos, 1);
+    	}
+    	else {
+        	selList.push(val);
+    	}
+    	//console.log(val);
+        //console.log(selList);
+    	var textList = selList.join(", ");
+    	selQuery = encodeURIComponent(selList[0])
+    	var i;
+    	for (i=1; i<selList.length; ++i) {
+    		selQuery = selQuery + '&' + encodeURIComponent(selList[i])
+    	}
+    	console.log(selQuery);
+    	$("#selList").val(textList);
+    }
+    function showChart() {
+    	if (selList.length>0) {
+    		var url = 'http://127.0.0.1:5001/getplot/'+selQuery;
+    		//var url = 'http://127.0.0.1:5001/getprice/';
+    		console.log(url);
+    		$.getJSON(url, function(data) {
+    	    	var json = data;
+    	    	console.log(json);
+    	    	$("#svgFig1").append("<div>"+json.svg+"</div>")
+    		});
+    	}
+    }
+    function clearList() {
+    	selList = [];
+    	$("#selList").val("");
+    }
+    </script>
+  </body>
+</html>

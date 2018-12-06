@@ -1,0 +1,36 @@
+#HomeSection {
+	background: #e74c3c;
+    color: #FFFF33;
+    padding: 0;
+}
+#JumbotronImage {
+	width: 100%;
+}
+#JumbotronHeading {
+	margin-top: 30px;
+}
+#JumbotronPara {
+	margin-top: 120px;
+	padding-left: 100px;
+}
+#JumbotronTable {
+	margin-top: 160px;
+	margin-left: 100px;
+}
+.jumbotronTextOnImages {
+	position: absolute;
+	width: 100%;
+}
+.btn-transparent {
+	background-color: Transparent;
+}
+.btn-transparent:hover {
+	color: #BDB76B;
+}
+.btn-transparent:active, 
+.btn-transparent.active, 
+.btn-transparent:focus,
+.btn-transparent.focus {
+	color: #FFFFFF !important;
+}
+
