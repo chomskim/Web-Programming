@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset=utf-8>
+  <title>Draw X</title>
+  <style type="text/css">
+    #nemopan {
+      background-color: #EEFFFF;
+      position: absolute;
+      left: 100px;
+      top: 100px;      
+    }
+  </style>
+</head>
+<body>
+  <canvas id="nemopan" width="400" height="400">
+  </canvas>
+  <script src="./js/jquery-3.3.1.min.js"></script>
+  <script src="./js/vector2d.js"></script>
+  <!--  
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  -->
+  <script type="text/javascript">
+	function drawLine(ctx, width, color, from, to) {
+		ctx.lineWidth = width;
+		ctx.strokeStyle = color;
+		ctx.beginPath();
+		ctx.moveTo(from.x, from.y);
+		ctx.lineTo(to.x, to.y); 
+		ctx.closePath();
+		ctx.stroke();					
+	}
+	function drawCircle(ctx, width, color, center, radius){
+		ctx.lineWidth = width;
+		ctx.strokeStyle = color;
+		ctx.beginPath(); 
+		ctx.arc(center.x , center.y, radius, 0, Math.PI*2, false);
+		ctx.closePath(); 
+		ctx.stroke();					
+	}
+
+	$(document).ready(function() {
+		
+		var canvas = $("#nemopan");
+		var canvasWidth = canvas.width();
+		var canvasHeight = canvas.height();
+		var context = canvas.get(0).getContext("2d");
+
+		//drawLine(context, 20, "black", new Vector2d(50, 50), new Vector2d(350, 350))
+		//drawLine(context, 20, "black", new Vector2d(50, 350), new Vector2d(350, 50))
+		var mCenter = Math.min(canvasWidth, canvasHeight)/2;
+		var cirCenter = new Vector2d(mCenter, mCenter);		
+		var cirRadius = mCenter * 0.8;
+		
+		drawCircle(context, 20, "black", cirCenter, cirRadius);
+	});
+  </script>
+</body>
+</html>  

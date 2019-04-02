@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset=utf-8>
+  <title>Draw X</title>
+  <style type="text/css">
+    #nemopan {
+      background-color: #EEFFFF;
+      position: absolute;
+      left: 100px;
+      top: 100px;      
+    }
+  </style>
+</head>
+<body>
+  <canvas id="nemopan" width="400" height="400">
+  </canvas>
+  <script src="./js/jquery-3.3.1.min.js"></script>
+  <script src="./js/vector2d.js"></script>
+  <!--  
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  -->
+  <script type="text/javascript">
+    function Tile(x, y, w, h){
+		this.x = x;
+		this.y = y;
+		this.width = w;
+		this.height = h;
+    }
+	function drawLine(ctx, width, color, from, to) {
+		ctx.lineWidth = width;
+		ctx.strokeStyle = color;
+		ctx.beginPath();
+		ctx.moveTo(from.x, from.y);
+		ctx.lineTo(to.x, to.y); 
+		ctx.closePath();
+		ctx.stroke();					
+	}
+	function drawCircle(ctx, width, color, center, radius){
+		ctx.lineWidth = width;
+		ctx.strokeStyle = color;
+		ctx.beginPath(); 
+		ctx.arc(center.x , center.y, radius, 0, Math.PI*2, false);
+		ctx.closePath(); 
+		ctx.stroke();					
+	}
+	function drawX(ctx, width, color, tile) {
+		var toplft = new Vector2d(tile.x + 0.2*tile.width, tile.y + 0.2*tile.height);
+		var toprgt = new Vector2d(tile.x + 0.8*tile.width, tile.y + 0.2*tile.height);
+		var botlft = new Vector2d(tile.x + 0.2*tile.width, tile.y + 0.8*tile.height);
+		var botrgt = new Vector2d(tile.x + 0.8*tile.width, tile.y + 0.8*tile.height);
+		drawLine(ctx, width, color, toplft, botrgt);
+		drawLine(ctx, width, color, toprgt, botlft);
+	}
+	function drawO(ctx, width, color, tile) {
+		var cen = new Vector2d(tile.x + 0.5*tile.width, tile.y + 0.5*tile.height);
+		var rad = Math.min(tile.width, tile.height)*0.35;
+		drawCircle(ctx, width, color, cen, rad);
+	}
+
+	$(document).ready(function() {
+		
+		var canvas = $("#nemopan");
+		var canvasWidth = canvas.width();
+		var canvasHeight = canvas.height();
+		var context = canvas.get(0).getContext("2d");
+
+		var wdiv3 = canvasWidth / 3.0;
+		var hdiv3 = canvasHeight / 3.0;
+		var wdiv32 = wdiv3*2.0;
+		var hdiv32 = hdiv3*2.0;
+		var tiles = [ 
+				new Tile(0,0,wdiv3,hdiv3), new Tile(wdiv3,0,wdiv3,hdiv3), new Tile(wdiv32,0,wdiv3,hdiv3),
+				new Tile(0,hdiv3,wdiv3,hdiv3), new Tile(wdiv3,hdiv3,wdiv3,hdiv3), new Tile(wdiv32,hdiv3,wdiv3,hdiv3),
+				new Tile(0,hdiv32,wdiv3,hdiv3), new Tile(wdiv3,hdiv32,wdiv3,hdiv3), new Tile(wdiv32,hdiv32,wdiv3,hdiv3)
+			];
+		
+		for (var i=0; i<4; ++i) {
+			drawLine(context, 2, "LightBlue", new Vector2d(wdiv3*i, 0), new Vector2d(wdiv3*i, hdiv3*3));
+			drawLine(context, 2, "LightBlue", new Vector2d(0, hdiv3*i), new Vector2d(wdiv3*3, hdiv3*i));
+		}
+
+		for (var i=0; i<tiles.length; ++i) {
+			if (i%2==0) {
+				drawX(context, 7, "darkblue", tiles[i]);
+			}
+			else {
+				drawO(context, 7, "darkred", tiles[i]);
+			}
+		}
+
+		
+	});
+  </script>
+</body>
+</html>  

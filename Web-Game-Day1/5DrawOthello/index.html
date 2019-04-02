@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset=utf-8>
+  <title>Draw X</title>
+  <style type="text/css">
+    #nemopan {
+      background-color: green;
+      position: absolute;
+      left: 100px;
+      top: 100px;      
+    }
+  </style>
+</head>
+<body>
+  <canvas id="nemopan" width="500" height="500">
+  </canvas>
+  <script src="./js/jquery-3.3.1.min.js"></script>
+  <script src="./js/vector2d.js"></script>
+  <!--  
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  -->
+  <script type="text/javascript">
+    function Tile(x, y, w, h){
+		this.x = x;
+		this.y = y;
+		this.width = w;
+		this.height = h;
+    }
+	function drawLine(ctx, width, color, from, to) {
+		ctx.lineWidth = width;
+		ctx.strokeStyle = color;
+		ctx.beginPath();
+		ctx.moveTo(from.x, from.y);
+		ctx.lineTo(to.x, to.y); 
+		ctx.closePath();
+		ctx.stroke();					
+	}
+	function drawCircle(ctx, width, color, center, radius){
+		ctx.lineWidth = width;
+		ctx.strokeStyle = color;
+		ctx.beginPath(); 
+		ctx.arc(center.x , center.y, radius, 0, Math.PI*2, false);
+		ctx.closePath(); 
+		ctx.stroke();					
+	}
+	function drawCircle(ctx, color, center, radius){
+		ctx.fillStyle = color;
+		ctx.beginPath(); 
+		ctx.arc(center.x , center.y, radius, 0, Math.PI*2, false);
+		ctx.closePath(); 
+		ctx.fill();
+	}
+
+	function drawX(ctx, width, color, tile) {
+		var toplft = new Vector2d(tile.x + 0.2*tile.width, tile.y + 0.2*tile.height);
+		var toprgt = new Vector2d(tile.x + 0.8*tile.width, tile.y + 0.2*tile.height);
+		var botlft = new Vector2d(tile.x + 0.2*tile.width, tile.y + 0.8*tile.height);
+		var botrgt = new Vector2d(tile.x + 0.8*tile.width, tile.y + 0.8*tile.height);
+		drawLine(ctx, width, color, toplft, botrgt);
+		drawLine(ctx, width, color, toprgt, botlft);
+	}
+	function drawO(ctx, width, color, tile) {
+		var cen = new Vector2d(tile.x + 0.5*tile.width, tile.y + 0.5*tile.height);
+		var rad = Math.min(tile.width, tile.height)*0.35;
+		drawCircle(ctx, width, color, cen, rad);
+	}
+	function drawO(ctx, color, tile) {
+		var cen = new Vector2d(tile.x + 0.5*tile.width, tile.y + 0.5*tile.height);
+		var rad = Math.min(tile.width, tile.height)*0.35;
+		drawCircle(ctx, color, cen, rad);
+	}
+
+	$(document).ready(function() {
+		
+		var canvas = $("#nemopan");
+		var canvasWidth = canvas.width();
+		var canvasHeight = canvas.height();
+		var context = canvas.get(0).getContext("2d");
+
+		var wdiv8 = canvasWidth / 8.0;
+		var hdiv8 = canvasHeight / 8.0;
+		
+		var tile2d = new Array(8);
+		for (var i = 0; i < 8; ++i) {
+			var top = i*hdiv8;
+			tile2d[i] = new Array(8);
+			for (var j=0; j < 8; ++j) {
+				var left = j*wdiv8;
+				tile2d[i][j] = new Tile(left, top, wdiv8, hdiv8);
+			}			
+		}
+		
+		for (var i=0; i<8; ++i) {
+			drawLine(context, 2, "lightyellow", new Vector2d(wdiv8*i, 0), new Vector2d(wdiv8*i, hdiv8*8));
+			drawLine(context, 2, "lightyellow", new Vector2d(0, hdiv8*i), new Vector2d(wdiv8*8, hdiv8*i));
+		}
+		for (var i=0; i<8; ++i) {
+			for ( var j=0; j<8; ++j) {
+				var rnd = Math.floor(Math.random() * 10); // returns a random integer from 0 to 9
+				if (rnd >= 7) {
+					drawO(context, "black", tile2d[i][j]);
+				}
+				else if (rnd >= 4) {
+					drawO(context, "white", tile2d[i][j]);
+				}
+			}
+		}
+		
+	});
+  </script>
+</body>
+</html>  
