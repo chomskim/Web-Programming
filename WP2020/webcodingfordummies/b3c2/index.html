@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Calling a function is response to an event</title>
+        
+        <style>
+        </style>
+        <script>
+            function makeBackgroundRed() {
+                document.body.style.backgroundColor= "red";
+            }
+            
+            function makeBackgroundWhite() {
+                document.body.style.backgroundColor= "white";
+            }
+        </script>
+    </head>
+    <body>
+        <button onclick="makeBackgroundRed()">
+            Make Background Red
+        </button>
+        <button onclick="makeBackgroundWhite()">
+            Make Background White
+        </button>
+    </body>
+</html>
