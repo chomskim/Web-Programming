@@ -1,430 +1,435 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<title>Animate Boids Flocking</title>
-		<meta charset="utf-8">
-  		<link rel = "stylesheet"
-        	type = "text/css"
-        	href = "./js/jquery-ui-1.8.1.custom.css" />
-        
-		<style type = "text/css">
-			#boidCanvas {
-				background-color: #00FFFF;
-			}
-			#slidersBlock {
-				width: 500px;
-      			margin-top: 1em;
-			}
-		</style>
-		<script type="text/javascript" src="./js/jquery-1.4.3.js"></script>
-  		<script type ="text/javascript" src ="./js/jquery-ui-1.8.1.custom.min.js"></script>
-		<script type="text/javascript" src="./js/vector2d.js"></script>
-		<script type="text/javascript">
-			var ANIMATE_INTERVAL = 100;
-			
-			var MAX_BOID = 100;
-			var DIRECTION_DISPLAY = true;
-			
-			var NEIGHBOUR_RADIUS = 150;
-			var DESIRED_SEPARATION = 40;
-			
-			var SEPARATION_WEIGHT = 3.0;
-			var COHESION_WEIGHT = 0.8;
-			var ALIGNMENT_WEIGHT = 5.0;
-			
-			var SIGHT_ANGLE = 135; // Degree
-			
-			var TURN_LIMIT = 7*Math.PI/180;
-			
-			var canvasWidth = 800;
-			var canvasHeight = 600;
-			
-			var boids;
-			
-			function dice(from, to) {
-				return Math.floor((Math.random() * (to - from + 1)) + from);
-			}
+  <head>
+    <title>Animate Boids Flocking</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" type="text/css" href="./js/jquery-ui-1.8.1.custom.css" />
 
-			function colorString(r, g, b) {
-				return "rgb(" + r + "," + g + "," + b + ")";
-			}
+    <style type="text/css">
+      #boidCanvas {
+        background-color: #00ffff;
+      }
+      #slidersBlock {
+        width: 500px;
+        margin-top: 1em;
+      }
+    </style>
+    <script type="text/javascript" src="./js/jquery-1.4.3.js"></script>
+    <script type="text/javascript" src="./js/jquery-ui-1.8.1.custom.min.js"></script>
+    <script type="text/javascript" src="./js/vector2d.js"></script>
+    <script type="text/javascript">
+      var ANIMATE_INTERVAL = 100;
 
-			function randomColor() {
-				return colorString(dice(0, 255), dice(0, 255), dice(0, 255));
-			}
+      var MAX_BOID = 100;
+      var DIRECTION_DISPLAY = true;
 
-			function Boid(color, x, y, rot, size, speed) {
-				this.color = color;
-				this.x = x;
-				this.y = y;
-				this.size = size;
-				this.speed = speed;
+      var NEIGHBOUR_RADIUS = 150;
+      var DESIRED_SEPARATION = 40;
 
-				this.setRad = function(rad){
-					this.rad = rad;
-					this.vx = this.speed * Math.cos(this.rad);
-					this.vy = this.speed * Math.sin(this.rad);
-				}
-				this.setRad(rot * Math.PI / 180);
+      var SEPARATION_WEIGHT = 3.0;
+      var COHESION_WEIGHT = 0.8;
+      var ALIGNMENT_WEIGHT = 5.0;
 
-				this.draw = function(context) {
-					context.save();
+      var SIGHT_ANGLE = 135; // Degree
 
-					context.translate(this.x, this.y);
-					context.rotate(this.rad);
-					// Draw Arrow Tip Shape
-					context.fillStyle = this.color;
-					context.beginPath();
-					context.moveTo(0, 0);
-					context.lineTo(-10 * this.size, -10 * this.size);
-					context.lineTo(20 * this.size, 0);
-					context.lineTo(-10 * this.size, 10 * this.size);
-					context.closePath();
-					context.fill();
+      var TURN_LIMIT = (7 * Math.PI) / 180;
 
-					context.restore();
+      var canvasWidth = 800;
+      var canvasHeight = 600;
 
-				}
-				this.getCohesion = function(neighbour){
-					var location = new Vector2d(0,0);
-					if (neighbour.length == 0) return location;
-					for(var i = 0; i < neighbour.length; ++i) {
-						location.x += neighbour[i].x;
-						location.y += neighbour[i].y;
-					}
-					location.scale(1.0/neighbour.length);
-					var cohes = location.sub(new Vector2d(this.x, this.y));
-					return cohes;
-				}
-				this.getSeparation = function(avoidboids){
-					var location = new Vector2d(0,0);
-					if (avoidboids.length == 0) return location;
-					for(var i = 0; i < avoidboids.length; ++i) {
-						location.x += avoidboids[i].x;
-						location.y += avoidboids[i].y;
-					}
-					location.scale(1.0/avoidboids.length);
-					var sepa = (new Vector2d(this.x, this.y)).sub(location);
-					return sepa;
-				}
-				this.getAlignment = function(neighbour){
-					var dir = new Vector2d(0,0);
-					if (neighbour.length == 0) return dir;
-					for(var i = 0; i < neighbour.length; ++i) {
-						var ndir = new Vector2d(neighbour[i].vx, neighbour[i].vy);
-						dir.add(ndir);
-					}
-					dir.scale(1.0/neighbour.length);
-					return dir;
-				}
-			}
+      var boids;
 
-			function setParameters(){
-				MAX_BOID = parseInt($("#boidcount").val());
-				
-      			NEIGHBOUR_RADIUS = $("#sliderNeighbourLimit").slider("value");
-      			DESIRED_SEPARATION = $("#sliderAvoidLimit").slider("value");
-      			SIGHT_ANGLE = $("#sliderSightAngle").slider("value");
-				
-				SEPARATION_WEIGHT = $("#sliderSeparationWeight").slider("value");
-				COHESION_WEIGHT = $("#sliderCohesionWeight").slider("value");
-				ALIGNMENT_WEIGHT = $("#sliderAlignmentWeight").slider("value");
-				
-				$("#neighbourLimit").html(NEIGHBOUR_RADIUS);
-				$("#avoidLimit").html(DESIRED_SEPARATION);
-				$("#sightAngle").html(SIGHT_ANGLE);
+      function dice(from, to) {
+        return Math.floor(Math.random() * (to - from + 1) + from);
+      }
 
-				$("#separationWeight").html(SEPARATION_WEIGHT);
-				$("#cohesionWeight").html(COHESION_WEIGHT);
-				$("#alignmentWeight").html(ALIGNMENT_WEIGHT);
-			}
-    		var sliderNeighbourLimit;
-    		var sliderAvoidLimit;
-    		var sliderSightAngle;
-    		var sliderSeparationWeight;
-    		var sliderCohesionWeight;
-    		var sliderAlignmentWeight;
-    
-			function initSliders(){
-				sliderNeighbourLimit = $("#sliderNeighbourLimit").slider({
-        			min: 0,
-        			max: 500,
-        			value: NEIGHBOUR_RADIUS,
-        			slide: setParameters})
-        			.css("border", "1px solid red");
-      			sliderAvoidLimit = $("#sliderAvoidLimit").slider({
-        			min: 0,
-        			max: NEIGHBOUR_RADIUS,
-        			value: DESIRED_SEPARATION,
-        			slide: setParameters})
-        			.css("border", "1px solid green");
-      			sliderSightAngle = $("#sliderSightAngle").slider({
-        			min: 0,
-        			max: 180,
-        			value: SIGHT_ANGLE,
-        			slide: setParameters})
-        			.css("border", "1px solid blue");
-				sliderSeparationWeight = $("#sliderSeparationWeight").slider({
-        			min: 0,
-        			max: 10,
-        			value: SEPARATION_WEIGHT,
-        			slide: setParameters})
-        			.css("border", "1px solid red");
-      			sliderCohesionWeight = $("#sliderCohesionWeight").slider({
-        			min: 0,
-        			max: 10,
-        			value: COHESION_WEIGHT,
-        			slide: setParameters})
-        			.css("border", "1px solid green");
-      			sliderAlignmentWeight = $("#sliderAlignmentWeight").slider({
-        			min: 0,
-        			max: 10,
-        			value: ALIGNMENT_WEIGHT,
-        			slide: setParameters})
-        			.css("border", "1px solid blue");
+      function colorString(r, g, b) {
+        return 'rgb(' + r + ',' + g + ',' + b + ')';
+      }
 
-				$("#neighbourLimit").html(NEIGHBOUR_RADIUS);
-				$("#avoidLimit").html(DESIRED_SEPARATION);
-				$("#sightAngle").html(SIGHT_ANGLE);
+      function randomColor() {
+        return colorString(dice(0, 255), dice(0, 255), dice(0, 255));
+      }
 
-				$("#separationWeight").html(SEPARATION_WEIGHT);
-				$("#cohesionWeight").html(COHESION_WEIGHT);
-				$("#alignmentWeight").html(ALIGNMENT_WEIGHT);
-			}
-			$(document).ready(function() {
-				var canvas = $("#boidCanvas");
-				var context = canvas.get(0).getContext("2d");
-				
-				canvas.attr("width", $(window).get(0).innerWidth);
-				canvas.attr("height", $(window).get(0).innerHeight);
-				canvasWidth = canvas.width();
-				canvasHeight = canvas.height();
+      function Boid(color, x, y, rot, size, speed) {
+        this.color = color;
+        this.x = x;
+        this.y = y;
+        this.size = size;
+        this.speed = speed;
 
-				MAX_BOID = parseInt($("#boidcount").val());
-				initSliders();
-				boids = new Array();
-				for( var i = 0; i < MAX_BOID; ++i) {
-					var rboid = new Boid(randomColor(), dice(1, canvasWidth), dice(1, canvasHeight), dice(-180, 180), 1, 10);
-					//var rboid = new Boid(randomColor(), dice(1,800), dice(1,600), 45, dice(1,3), 10);
-					boids.push(rboid);
-				}
-				var playAnimation = true;
+        this.setRad = function (rad) {
+          this.rad = rad;
+          this.vx = this.speed * Math.cos(this.rad);
+          this.vy = this.speed * Math.sin(this.rad);
+        };
+        this.setRad((rot * Math.PI) / 180);
 
-				var startButton = $("#startAnimation");
-				var stopButton = $("#stopAnimation");
-				var resetButton = $("#resetParameters")
+        this.draw = function (context) {
+          context.save();
 
-				startButton.hide();
-				startButton.click(function() {
-					$(this).hide();
-					stopButton.show();
-					playAnimation = true;
-					animate();
-				});
+          context.translate(this.x, this.y);
+          context.rotate(this.rad);
+          // Draw Arrow Tip Shape
+          context.fillStyle = this.color;
+          context.beginPath();
+          context.moveTo(0, 0);
+          context.lineTo(-10 * this.size, -10 * this.size);
+          context.lineTo(20 * this.size, 0);
+          context.lineTo(-10 * this.size, 10 * this.size);
+          context.closePath();
+          context.fill();
 
-				stopButton.click(function() {
-					$(this).hide();
-					startButton.show();
-					playAnimation = false;
-				});
-				resetButton.click(resetParameters);
-				
-				function resetParameters(){
-					
-					setParameters();
-				
-					boids = new Array();
-					MAX_BOID = parseInt($("#boidcount").val());
-					for( var i = 0; i < MAX_BOID; ++i) {
-						var rboid = new Boid(randomColor(), dice(1, canvasWidth), dice(1, canvasHeight), dice(-180, 180), 1, 10);
-						//var rboid = new Boid(randomColor(), dice(1,800), dice(1,600), 45, dice(1,3), 10);
-						boids.push(rboid);
-					}
-					playAnimation = false;
-					stopButton.hide();
-					startButton.show();
-					
-				}
-				
-				function updateBoidPosition(boid){
-					boid.x += boid.vx;
-					boid.y += boid.vy;
-					if(boid.vx > 0 && boid.x >= canvasWidth) {
-						boid.x = 0;
-					}
-					else if(boid.vx < 0 && boid.x <= 0) {
-						boid.x = canvasWidth;
-					}
-					if(boid.vy > 0 && boid.y >= canvasHeight) {
-						boid.y = 0;
-					}
-					else if(boid.vy < 0 && boid.y <= 0) {
-						boid.y = canvasHeight;
-					}
-					
-				}
-				function drawLine(color, from, to) {
-					context.lineWidth = 3;
-					context.strokeStyle = color;
-					context.beginPath();
-					context.moveTo(from.x, from.y);
-					context.lineTo(from.x+to.x, from.y+to.y); 
-					context.closePath();
-					context.stroke();
-					
-				}
-				function getNeighbour(iskip, boids){
-					var thisBoid = boids[iskip]
-					var v1 = new Vector2d(thisBoid.x, thisBoid.y);
-					var dir = new Vector2d(thisBoid.vx/thisBoid.speed, thisBoid.vy/thisBoid.speed);
-					var neighbour = new Array();
+          context.restore();
+        };
+        this.getCohesion = function (neighbour) {
+          var location = new Vector2d(0, 0);
+          if (neighbour.length == 0) return location;
+          for (var i = 0; i < neighbour.length; ++i) {
+            location.x += neighbour[i].x;
+            location.y += neighbour[i].y;
+          }
+          location.scale(1.0 / neighbour.length);
+          var cohes = location.sub(new Vector2d(this.x, this.y));
+          return cohes;
+        };
+        this.getSeparation = function (avoidboids) {
+          var location = new Vector2d(0, 0);
+          if (avoidboids.length == 0) return location;
+          for (var i = 0; i < avoidboids.length; ++i) {
+            location.x += avoidboids[i].x;
+            location.y += avoidboids[i].y;
+          }
+          location.scale(1.0 / avoidboids.length);
+          var sepa = new Vector2d(this.x, this.y).sub(location);
+          return sepa;
+        };
+        this.getAlignment = function (neighbour) {
+          var dir = new Vector2d(0, 0);
+          if (neighbour.length == 0) return dir;
+          for (var i = 0; i < neighbour.length; ++i) {
+            var ndir = new Vector2d(neighbour[i].vx, neighbour[i].vy);
+            dir.add(ndir);
+          }
+          dir.scale(1.0 / neighbour.length);
+          return dir;
+        };
+      }
 
-					for(var i = 0; i < boids.length; ++i) {
-						if (i==iskip) continue; // skip index
-						var v2 = new Vector2d(boids[i].x, boids[i].y);
-						v2.sub(v1);
-						var dist = v2.length();
-						var ang = dir.angle(v2);
-						if (dist < NEIGHBOUR_RADIUS && ang < SIGHT_ANGLE*Math.PI/180){
-							neighbour.push(boids[i]);
-						}
-					}
-					return neighbour;
-				}
-				function getAvoidNeighbour(thisBoid, nboids){
-					var v1 = new Vector2d(thisBoid.x, thisBoid.y);
-					var dir = new Vector2d(thisBoid.vx/thisBoid.speed, thisBoid.vy/thisBoid.speed);
-					var avoidNeighbour = new Array();
+      function setParameters() {
+        MAX_BOID = parseInt($('#boidcount').val());
 
-					for(var i = 0; i < nboids.length; ++i) {
-						var v2 = new Vector2d(nboids[i].x, nboids[i].y);
-						v2.sub(v1);
-						var dist = v2.length();
-						if (dist < DESIRED_SEPARATION){
-							avoidNeighbour.push(nboids[i]);
-						}
-					}
-					return avoidNeighbour;
-				}
-				// Animation loop that does all the fun stuff
-				function animate() {
-					// Clear
-					context.clearRect(0, 0, canvasWidth, canvasHeight);
+        NEIGHBOUR_RADIUS = $('#sliderNeighbourLimit').slider('value');
+        DESIRED_SEPARATION = $('#sliderAvoidLimit').slider('value');
+        SIGHT_ANGLE = $('#sliderSightAngle').slider('value');
 
-					// Draw All Boids
-					for(var i = 0; i < boids.length; ++i) {
-						var thisBoid = boids[i];
-						updateBoidPosition(thisBoid);
-						thisBoid.draw(context);
+        SEPARATION_WEIGHT = $('#sliderSeparationWeight').slider('value');
+        COHESION_WEIGHT = $('#sliderCohesionWeight').slider('value');
+        ALIGNMENT_WEIGHT = $('#sliderAlignmentWeight').slider('value');
 
-						var neighbour = getNeighbour(i, boids);
-						var avoidNeighbour = getAvoidNeighbour(thisBoid, neighbour);
-					
-						var cohe = thisBoid.getCohesion(neighbour);
-						var sepa = thisBoid.getSeparation(avoidNeighbour);
-						var align = thisBoid.getAlignment(neighbour);
-						
-						if (i==0 && DIRECTION_DISPLAY){
-							// Draw thisBoid Velocity vector
-							drawLine("rgb(0, 0, 0)", thisBoid, new Vector2d(thisBoid.vx, thisBoid.vy));
-							// Draw Cohesion Vector
-							drawLine("rgb(255, 255, 0)", thisBoid, cohe);
-							// Draw Separation Vector
-							drawLine("rgb(150, 0, 0)", thisBoid, sepa);
-							// Draw Alignment Vector
-							drawLine("rgb(0, 255, 0)", thisBoid, align);
-						}
-					
-						cohe.normalize().scale(COHESION_WEIGHT);
-						sepa.normalize().scale(SEPARATION_WEIGHT);
-						align.normalize().scale(ALIGNMENT_WEIGHT);
-						var velocityDir = new Vector2d(thisBoid.vx/thisBoid.speed, thisBoid.vy/thisBoid.speed);
-						velocityDir.add(cohe).add(sepa).add(align).normalize();
-						var vrad = Math.atan2(velocityDir.y, velocityDir.x);
-						var rdelta = vrad - thisBoid.rad;
-						
-						var deg1 = thisBoid.rad/Math.PI*180;
-						var deg2 = vrad/Math.PI*180;
-						var deg3 = rdelta/Math.PI*180;
-						
-						if (rdelta > Math.PI)
-							rdelta = rdelta - (2*Math.PI);
-						else if (rdelta < -Math.PI)
-							rdelta = rdelta + (2*Math.PI);
-						deg3 = rdelta/Math.PI*180;
-							
-						if (Math.abs(rdelta) > TURN_LIMIT){
-							if (rdelta < 0)
-								rdelta = -TURN_LIMIT;
-							else
-								rdelta = TURN_LIMIT;
-						}
-						deg3 = rdelta/Math.PI*180;
-						
-						vrad = thisBoid.rad + rdelta;
-						deg2 = vrad/Math.PI*180;
-						
-						thisBoid.setRad(vrad);
-						var deg = vrad/Math.PI*180;
-					
-					}					
-					
-					if(playAnimation) {
-						// Run the animation loop again in ANIMATE_INTERVAL milliseconds
-						setTimeout(animate, ANIMATE_INTERVAL);
-					}
-				};
+        $('#neighbourLimit').html(NEIGHBOUR_RADIUS);
+        $('#avoidLimit').html(DESIRED_SEPARATION);
+        $('#sightAngle').html(SIGHT_ANGLE);
 
-				// Start the animation loop
-				animate();
-			});
+        $('#separationWeight').html(SEPARATION_WEIGHT);
+        $('#cohesionWeight').html(COHESION_WEIGHT);
+        $('#alignmentWeight').html(ALIGNMENT_WEIGHT);
+      }
+      var sliderNeighbourLimit;
+      var sliderAvoidLimit;
+      var sliderSightAngle;
+      var sliderSeparationWeight;
+      var sliderCohesionWeight;
+      var sliderAlignmentWeight;
 
-		</script>
-	</head>
-	<body>
-		<canvas id="boidCanvas" width="800" height="600">
-			<!-- Insert fallback content here -->
-		</canvas>
-		<div>
-			<button id="startAnimation">
-				Start
-			</button>
-			<button id="stopAnimation">
-				Stop
-			</button>
-			<button id="resetParameters">
-				Reset
-			</button>
-           
-		</div>
-		<div>
-			<br>새의 마리 수 : <input type="text" id="boidcount" value="100" >마리<br>
-		</div>
-		<div id=slidersBlock>
-			<div>
-				볼 수 있는 거리 [ <span id="neighbourLimit"></span> ] 
-				<div id="sliderNeighbourLimit"></div>
-			</div>
-			<div>
-				피하는 거리 [ <span id="avoidLimit"></span> ] 
-				<div id="sliderAvoidLimit"></div>
-			</div>
-			<div>
-				볼 수 있는 각도 [ <span id="sightAngle"></span> 도] 
-				<div id="sliderSightAngle"></div>
-			</div>
-			<div>
-				근접 회피 비중 [ <span id="separationWeight"></span> ] 
-				<div id="sliderSeparationWeight"></div>
-			</div>
-			<div>
-				응집 성향 비중 [ <span id="cohesionWeight"></span> ] 
-				<div id="sliderCohesionWeight"></div>
-			</div>
-			<div>
-				방향 일치 비중 [ <span id="alignmentWeight"></span> ] 
-				<div id="sliderAlignmentWeight"></div>
-			</div>
-		</div>
-	</body>
+      function initSliders() {
+        sliderNeighbourLimit = $('#sliderNeighbourLimit')
+          .slider({
+            min: 0,
+            max: 500,
+            value: NEIGHBOUR_RADIUS,
+            slide: setParameters,
+          })
+          .css('border', '1px solid red');
+        sliderAvoidLimit = $('#sliderAvoidLimit')
+          .slider({
+            min: 0,
+            max: NEIGHBOUR_RADIUS,
+            value: DESIRED_SEPARATION,
+            slide: setParameters,
+          })
+          .css('border', '1px solid green');
+        sliderSightAngle = $('#sliderSightAngle')
+          .slider({
+            min: 0,
+            max: 180,
+            value: SIGHT_ANGLE,
+            slide: setParameters,
+          })
+          .css('border', '1px solid blue');
+        sliderSeparationWeight = $('#sliderSeparationWeight')
+          .slider({
+            min: 0,
+            max: 10,
+            value: SEPARATION_WEIGHT,
+            slide: setParameters,
+          })
+          .css('border', '1px solid red');
+        sliderCohesionWeight = $('#sliderCohesionWeight')
+          .slider({
+            min: 0,
+            max: 10,
+            value: COHESION_WEIGHT,
+            slide: setParameters,
+          })
+          .css('border', '1px solid green');
+        sliderAlignmentWeight = $('#sliderAlignmentWeight')
+          .slider({
+            min: 0,
+            max: 10,
+            value: ALIGNMENT_WEIGHT,
+            slide: setParameters,
+          })
+          .css('border', '1px solid blue');
+
+        $('#neighbourLimit').html(NEIGHBOUR_RADIUS);
+        $('#avoidLimit').html(DESIRED_SEPARATION);
+        $('#sightAngle').html(SIGHT_ANGLE);
+
+        $('#separationWeight').html(SEPARATION_WEIGHT);
+        $('#cohesionWeight').html(COHESION_WEIGHT);
+        $('#alignmentWeight').html(ALIGNMENT_WEIGHT);
+      }
+      $(document).ready(function () {
+        var canvas = $('#boidCanvas');
+        var context = canvas.get(0).getContext('2d');
+
+        canvas.attr('width', $(window).get(0).innerWidth);
+        canvas.attr('height', $(window).get(0).innerHeight);
+        canvasWidth = canvas.width();
+        canvasHeight = canvas.height();
+
+        MAX_BOID = parseInt($('#boidcount').val());
+        initSliders();
+        boids = new Array();
+        for (var i = 0; i < MAX_BOID; ++i) {
+          var rboid = new Boid(
+            randomColor(),
+            dice(1, canvasWidth),
+            dice(1, canvasHeight),
+            dice(-180, 180),
+            1,
+            10
+          );
+          //var rboid = new Boid(randomColor(), dice(1,800), dice(1,600), 45, dice(1,3), 10);
+          boids.push(rboid);
+        }
+        var playAnimation = true;
+
+        var startButton = $('#startAnimation');
+        var stopButton = $('#stopAnimation');
+        var resetButton = $('#resetParameters');
+
+        startButton.hide();
+        startButton.click(function () {
+          $(this).hide();
+          stopButton.show();
+          playAnimation = true;
+          animate();
+        });
+
+        stopButton.click(function () {
+          $(this).hide();
+          startButton.show();
+          playAnimation = false;
+        });
+        resetButton.click(resetParameters);
+
+        function resetParameters() {
+          setParameters();
+
+          boids = new Array();
+          MAX_BOID = parseInt($('#boidcount').val());
+          for (var i = 0; i < MAX_BOID; ++i) {
+            var rboid = new Boid(
+              randomColor(),
+              dice(1, canvasWidth),
+              dice(1, canvasHeight),
+              dice(-180, 180),
+              1,
+              10
+            );
+            //var rboid = new Boid(randomColor(), dice(1,800), dice(1,600), 45, dice(1,3), 10);
+            boids.push(rboid);
+          }
+          playAnimation = false;
+          stopButton.hide();
+          startButton.show();
+        }
+
+        function updateBoidPosition(boid) {
+          boid.x += boid.vx;
+          boid.y += boid.vy;
+          if (boid.vx > 0 && boid.x >= canvasWidth) {
+            boid.x = 0;
+          } else if (boid.vx < 0 && boid.x <= 0) {
+            boid.x = canvasWidth;
+          }
+          if (boid.vy > 0 && boid.y >= canvasHeight) {
+            boid.y = 0;
+          } else if (boid.vy < 0 && boid.y <= 0) {
+            boid.y = canvasHeight;
+          }
+        }
+        function drawLine(color, from, to) {
+          context.lineWidth = 3;
+          context.strokeStyle = color;
+          context.beginPath();
+          context.moveTo(from.x, from.y);
+          context.lineTo(from.x + to.x, from.y + to.y);
+          context.closePath();
+          context.stroke();
+        }
+        function getNeighbour(iskip, boids) {
+          var thisBoid = boids[iskip];
+          var v1 = new Vector2d(thisBoid.x, thisBoid.y);
+          var dir = new Vector2d(thisBoid.vx / thisBoid.speed, thisBoid.vy / thisBoid.speed);
+          var neighbour = new Array();
+
+          for (var i = 0; i < boids.length; ++i) {
+            if (i == iskip) continue; // skip index
+            var v2 = new Vector2d(boids[i].x, boids[i].y);
+            v2.sub(v1);
+            var dist = v2.length();
+            var ang = dir.angle(v2);
+            if (dist < NEIGHBOUR_RADIUS && ang < (SIGHT_ANGLE * Math.PI) / 180) {
+              neighbour.push(boids[i]);
+            }
+          }
+          return neighbour;
+        }
+        function getAvoidNeighbour(thisBoid, nboids) {
+          var v1 = new Vector2d(thisBoid.x, thisBoid.y);
+          var dir = new Vector2d(thisBoid.vx / thisBoid.speed, thisBoid.vy / thisBoid.speed);
+          var avoidNeighbour = new Array();
+
+          for (var i = 0; i < nboids.length; ++i) {
+            var v2 = new Vector2d(nboids[i].x, nboids[i].y);
+            v2.sub(v1);
+            var dist = v2.length();
+            if (dist < DESIRED_SEPARATION) {
+              avoidNeighbour.push(nboids[i]);
+            }
+          }
+          return avoidNeighbour;
+        }
+        // Animation loop that does all the fun stuff
+        function animate() {
+          // Clear
+          context.clearRect(0, 0, canvasWidth, canvasHeight);
+
+          // Draw All Boids
+          for (var i = 0; i < boids.length; ++i) {
+            var thisBoid = boids[i];
+            updateBoidPosition(thisBoid);
+            thisBoid.draw(context);
+
+            var neighbour = getNeighbour(i, boids);
+            var avoidNeighbour = getAvoidNeighbour(thisBoid, neighbour);
+
+            var cohe = thisBoid.getCohesion(neighbour);
+            var sepa = thisBoid.getSeparation(avoidNeighbour);
+            var align = thisBoid.getAlignment(neighbour);
+
+            if (i == 0 && DIRECTION_DISPLAY) {
+              // Draw thisBoid Velocity vector
+              drawLine('rgb(0, 0, 0)', thisBoid, new Vector2d(thisBoid.vx, thisBoid.vy));
+              // Draw Cohesion Vector
+              drawLine('rgb(255, 255, 0)', thisBoid, cohe);
+              // Draw Separation Vector
+              drawLine('rgb(150, 0, 0)', thisBoid, sepa);
+              // Draw Alignment Vector
+              drawLine('rgb(0, 255, 0)', thisBoid, align);
+            }
+
+            cohe.normalize().scale(COHESION_WEIGHT);
+            sepa.normalize().scale(SEPARATION_WEIGHT);
+            align.normalize().scale(ALIGNMENT_WEIGHT);
+            var velocityDir = new Vector2d(
+              thisBoid.vx / thisBoid.speed,
+              thisBoid.vy / thisBoid.speed
+            );
+            velocityDir.add(cohe).add(sepa).add(align).normalize();
+            var vrad = Math.atan2(velocityDir.y, velocityDir.x);
+            var rdelta = vrad - thisBoid.rad;
+
+            var deg1 = (thisBoid.rad / Math.PI) * 180;
+            var deg2 = (vrad / Math.PI) * 180;
+            var deg3 = (rdelta / Math.PI) * 180;
+
+            if (rdelta > Math.PI) rdelta = rdelta - 2 * Math.PI;
+            else if (rdelta < -Math.PI) rdelta = rdelta + 2 * Math.PI;
+            deg3 = (rdelta / Math.PI) * 180;
+
+            if (Math.abs(rdelta) > TURN_LIMIT) {
+              if (rdelta < 0) rdelta = -TURN_LIMIT;
+              else rdelta = TURN_LIMIT;
+            }
+            deg3 = (rdelta / Math.PI) * 180;
+
+            vrad = thisBoid.rad + rdelta;
+            deg2 = (vrad / Math.PI) * 180;
+
+            thisBoid.setRad(vrad);
+            var deg = (vrad / Math.PI) * 180;
+          }
+
+          if (playAnimation) {
+            // Run the animation loop again in ANIMATE_INTERVAL milliseconds
+            setTimeout(animate, ANIMATE_INTERVAL);
+          }
+        }
+
+        // Start the animation loop
+        animate();
+      });
+    </script>
+  </head>
+  <body>
+    <canvas id="boidCanvas" width="800" height="600">
+      <!-- Insert fallback content here -->
+    </canvas>
+    <div>
+      <button id="startAnimation">Start</button>
+      <button id="stopAnimation">Stop</button>
+      <button id="resetParameters">Reset</button>
+    </div>
+    <div><br />새의 마리 수 : <input type="text" id="boidcount" value="100" />마리<br /></div>
+    <div id="slidersBlock">
+      <div>
+        볼 수 있는 거리 [ <span id="neighbourLimit"></span> ]
+        <div id="sliderNeighbourLimit"></div>
+      </div>
+      <div>
+        피하는 거리 [ <span id="avoidLimit"></span> ]
+        <div id="sliderAvoidLimit"></div>
+      </div>
+      <div>
+        볼 수 있는 각도 [ <span id="sightAngle"></span> 도]
+        <div id="sliderSightAngle"></div>
+      </div>
+      <div>
+        근접 회피 비중 [ <span id="separationWeight"></span> ]
+        <div id="sliderSeparationWeight"></div>
+      </div>
+      <div>
+        응집 성향 비중 [ <span id="cohesionWeight"></span> ]
+        <div id="sliderCohesionWeight"></div>
+      </div>
+      <div>
+        방향 일치 비중 [ <span id="alignmentWeight"></span> ]
+        <div id="sliderAlignmentWeight"></div>
+      </div>
+    </div>
+  </body>
 </html>
