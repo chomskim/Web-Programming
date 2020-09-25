@@ -1,36 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>The class selector</title>
-        
-        <style>
-            body {
-                margin: 2rem;
-                width: 900px;
-            }
-            
-            .caption {
-                font-size: 1.5rem;
-                font-style: italic;
-            }
-        </style>
-        <script>
-        </script>
-    </head>
-    <body>
-        <img src="/images/image27-thumbnail.jpg" alt="Boy among giants">
-        <div class="caption">
-        It’s a scary world when you're surrounded by brass giants.
-        </div>
-        <img src="/images/image35-thumbnail.jpg" alt="Looney Tunes characters in graffiti">
-        <div class="caption">
-        Uh, excuse,me? I believe that is a trademark violation.
-        </div>
-        <img src="/images/image24-thumbnail.jpg" alt="There's no such thing as the Dog Poo Fairy">
-        <div class="caption">
-        Another childhood illusion shattered.
-        </div>
-    </body>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The child selector</title>
+
+    <style>
+      body {
+        margin: 2rem;
+        width: 500px;
+      }
+
+      aside > a {
+        color: green;
+        font-style: bold;
+        text-decoration: none;
+      }
+    </style>
+    <script></script>
+  </head>
+  <body>
+    <div>Here are other topics you might like:</div>
+    <a href="#">Cat Polishers</a><br />
+    <a href="#">Steam-Powered Banana Peelers</a><br />
+    <a href="#">Water-Soluble Sponges</a>
+    <aside>
+      <h3>Things to Click</h3>
+      <a href="#">Funny Fruits</a><br />
+      <a href="#">Ridiculous Vegetables</a><br />
+      <a href="#">Absurd Cheeses</a>
+      <div>
+        <h3>Things Not to Click</h3>
+        <a href="#">Jokes that Induce Seizures</a><br />
+        <a href="#">Life-Ruining Suggestions</a>
+      </div>
+    </aside>
+  </body>
 </html>
