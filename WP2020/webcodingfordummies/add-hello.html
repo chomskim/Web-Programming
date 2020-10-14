@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Adding an element to the page</title>
+  </head>
+  <body>
+    <main></main>
+    <script>
+      let newArticle = document.createElement('article');
+      let main = document.querySelector('main');
+      console.log(main);
+      main.appendChild(newArticle);
+      newArticle.innerHTML = 'Hello <code>document</code> Object World!';
+    </script>
+  </body>
+</html>
