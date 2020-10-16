@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css"
+      integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ"
+      crossorigin="anonymous"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+
+    <link rel="stylesheet" href="CSS/index.css" />
+  </head>
+  <body>
+    <nav class="navbar navbar-toggleable-md navbar-inverse bg-inverse fixed-top">
+      <button
+        class="navbar-toggler navbar-toggler-right"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarTogglerDemo02"
+        aria-controls="navbarTogglerDemo02"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <a href="#" id="SidebarToggle" data-target="#sidebar" data-toggle="collapse"
+        ><i class="fa fa-navicon fa-2x py-2 p-1"></i
+      ></a>
+
+      <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+        <ul class="navbar-nav mr-auto mt-2 mt-md-0"></ul>
+
+        <form class="form-inline my-2 my-lg-0">
+          <input class="form-control mr-sm-2" type="text" placeholder="Search" />
+
+          <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        </form>
+      </div>
+    </nav>
+
+    <div class="container-fluid">
+      <div class="row d-flex d-md-block flex-nowrap wrapper">
+        <div class="col-md-3 float-left col-1 pl-0 pr-0 collapse width show" id="sidebar">
+          <div class="list-group border-0 card text-center text-md-left">
+            <a
+              href="#menu1"
+              class="list-group-item d-inline-block collapsed"
+              data-toggle="collapse"
+              data-parent="#sidebar"
+              aria-expanded="false"
+              ><i class="fa fa-dashboard"></i> <span class="hidden-sm-down">Account</span>
+            </a>
+            <div class="collapse" id="menu1">
+              <a href="#" class="list-group-item" data-parent="#menu1">Profile</a>
+              <a href="#" class="list-group-item" data-parent="#menu1">Notifications</a>
+              <a href="#" class="list-group-item" data-parent="#menu1">Messages</a>
+            </div>
+            <a href="#" class="list-group-item d-inline-block collapsed" data-parent="#sidebar"
+              ><i class="fa fa-film"></i> <span class="hidden-sm-down">Home</span></a
+            >
+          </div>
+        </div>
+
+        <main class="col-md-9 float-left col px-5 pl-md-2 pt-2 main">
+          <div class="row">
+            <div class="col-12 postContainer">
+              <div class="card">
+                <div class="card-block">
+                  <div class="media">
+                    <img class="d-flex mr-3 postThumbnail" src="images/Thumbnail.png" />
+
+                    <div class="media-body">
+                      <h5 class="mt-0">Frahaan Hussain</h5>
+                      <i>1st January 2000</i>
+
+                      <div class="postMainBody">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+                        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                        quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                        consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+                        cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat
+                        non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <footer class="footer">
+            <hr />
+
+            <div class="container">
+              <span>&copy; HUFS CES 2020</span>
+            </div>
+          </footer>
+        </main>
+      </div>
+    </div>
+
+    <!-- jQuery first, then Tether, then Bootstrap JS. -->
+    <script
+      src="https://code.jquery.com/jquery-3.2.1.min.js"
+      integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"
+      integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js"
+      integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn"
+      crossorigin="anonymous"
+    ></script>
+
+    <script src="JS/index.js"></script>
+  </body>
+</html>
