@@ -13,7 +13,10 @@ RSS_FEEDS = {'bbc': 'http://feeds.bbci.co.uk/news/rss.xml',
 @app.route("/")
 @app.route("/<publication>")
 def get_news(publication="bbc"):
+    if publication not in RSS_FEEDS.keys():
+        return "Error path &lt;{0}&gt; ".format(publication)
     feed = feedparser.parse(RSS_FEEDS[publication])
+    #print('articles=',feed['entries'])
     return render_template("home.html", articles=feed['entries'])
 
 if __name__ == "__main__":
