@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Running JavaScript</title>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  </head>
+  <body>
+    <table style="width: 100%">
+      <thead>
+        <tr>
+           <th style="width: 10%">Date</th>
+           <th style="width: 18%">LG</th>
+           <th style="width: 18%">NAVER</th>
+           <th style="width: 18%">SK</th>
+           <th style="width: 18%">삼성전자</th>
+           <th style="width: 18%">카카오</th>
+        </tr>
+      </thead>
+      <tbody id="tbody">
+      </tbody>
+    </table>
+
+    <script src="utils.js"></script>
+    <script src="csvdata_all.js"></script>
+    <script>
+    var selNames = ['LG', 'NAVER', 'SK', '삼성전자', '카카오']
+    var csv = getCsvData();
+    //console.log(csv);
+    json = csv2json(csv);
+    //console.log(json[0]);
+    sel = filterName(json, "name", selNames)
+    rows = groupByDate(sel);
+    console.log(rows);
+    
+    for (var i=0;i<rows.length;i++) {
+        var da  = rows[i]["date"];
+        var cols = rows[i]["cols"];
+        
+        var tabrow = "<tr>"
+                 + '<td style="width: 10%">' + da + "</td>"
+        for (var j=0;j<cols.length;j++) {
+            tabrow = tabrow + '<td style="width:18%; text-align:center;">' 
+                + cols[j]['price'] + "</td>";
+        }
+        tabrow += "</tr>";
+        $('#tbody').append(tabrow);
+        
+    }
+    </script>
+        
+    </body>
+</html>

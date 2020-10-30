@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {% include 'header.html' %}
+</head>
+<body>
+
+{% block navbar %}
+    <nav class="navbar navbar-default navbar-fixed-top">  
+      <ul class="nav nav-tabs">
+      <li class="nav-item">
+        <a href={{ url_for('home') }} class="nav-link">Home</a></li>
+       <li class="nav-item">
+        <a href={{ url_for('listprice') }} class="nav-link">List price Table</a></li>
+      </ul>
+    </nav>
+    <br>
+
+{% endblock %}
+
+{% block content %}
+{% endblock %}
+
+{% include 'footer.html' %}
+</body>
+</html>

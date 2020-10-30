@@ -1,0 +1,47 @@
+{% extends "base.html" %} 
+{% block content %}
+  <div class="container" style="margin-top:50px">
+    <form  action="/" method="POST">
+      <div class="form-group">
+      <div class="row">
+        <div class="col-md-2 form-group">
+          <label for="fundID">이수 구분</label>
+          <select class="selectpicker form-control form-group" name="gubun">
+            <option selected="selected" >전공</option>
+            <option >부전공</option>
+            <option >이중전공</option>
+            <option >복수전공</option>
+            <option >복수전공</option>
+          </select>
+        </div>
+        <div class="col-md-2 form-group">
+          <label >학년</label>
+          <select class="selectpicker form-control form-group" name=grade>
+            <option>1학년</option>
+            <option selected="selected">2학년</option>
+            <option>3학년</option>
+            <option>4학년</option>
+          </select>
+        </div>
+        <div class="col-md-2 form-group">
+          <label >학과</label>
+          <input type="text" class="form-control" name="stu_dept" 
+          value="" placeholder="학과" >       
+        </div>
+        <div class="col-md-2 form-group">
+          <label >이름</label>
+          <input type="text" class="form-control" name="stu_name" 
+          value="" placeholder="이름" >       
+        </div>
+        <div class="col-md-1 form-group">
+          <br>
+          <button class="btn btn-success">Submit</button>
+        </div>        
+      </div>
+      </div>
+
+    </form>
+    
+  </div>
+
+{% endblock %}
