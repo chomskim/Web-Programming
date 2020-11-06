@@ -20,10 +20,12 @@ WEATHER_URL = "http://api.openweathermap.org/data/2.5/weather?q={}&units=metric&
 CURRENCY_URL = "https://openexchangerates.org//api/latest.json?app_id=b23c94daab584f4580e4e2bf75cbcf7e"
 
 DEFAULTS = {'publication': 'bbc',
-            'city': 'London,UK',
-            'currency_from': 'GBP',
-            'currency_to': 'USD'
+            'city': 'Seoul,KR',
+            'currency_from': 'USD',
+            'currency_to': 'KRW'
             }
+CURRENCIES = ['USD', 'KRW','GBP','EUR','JPY']
+
 
 
 def get_value_with_fallback(key):
@@ -52,7 +54,8 @@ def home():
     # save cookies and return template
     response = make_response(render_template("home.html", articles=articles,
                                              weather=weather, currency_from=currency_from,
-                                             currency_to=currency_to, rate=rate, currencies=sorted(currencies)))
+                                             currency_to=currency_to, rate=rate, 
+                                             currencies=sorted(CURRENCIES)))
     expires = datetime.datetime.now() + datetime.timedelta(days=365)
     response.set_cookie("publication", publication, expires=expires)
     response.set_cookie("city", city, expires=expires)

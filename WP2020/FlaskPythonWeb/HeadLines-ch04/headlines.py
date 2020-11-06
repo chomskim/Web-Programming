@@ -17,7 +17,7 @@ WEATHER_URL = "http://api.openweathermap.org/data/2.5/weather?q={}&units=metric&
 CURRENCY_URL = "https://openexchangerates.org//api/latest.json?app_id=b23c94daab584f4580e4e2bf75cbcf7e"
 
 DEFAULTS = {'publication': 'bbc',
-            'city': 'London,UK',
+            'city': 'Seoul,KR',
             'currency_from': 'USD',
             'currency_to': 'KRW'
             }
@@ -29,7 +29,7 @@ def home():
     publication = request.args.get('publication')
     print('publication =',publication)
     if not publication:
-        publication = DEFAULTS['publication']
+        publication = DEFAULTS['publication'] // bbc
     articles = get_news(publication)
     # get customised weather based on user input or default
     city = request.args.get('city')

@@ -23,10 +23,11 @@ WEATHER_URL = "http://api.openweathermap.org/data/2.5/weather?q={}&units=metric&
 CURRENCY_URL = "https://openexchangerates.org//api/latest.json?app_id=b23c94daab584f4580e4e2bf75cbcf7e"
 
 DEFAULTS = {'publication': 'bbc',
-            'city': 'London,UK',
-            'currency_from': 'GBP',
-            'currency_to': 'USD'
+            'city': 'Seoul,KR',
+            'currency_from': 'USD',
+            'currency_to': 'KRW'
             }
+CURRENCIES = ['USD', 'KRW','GBP','EUR','JPY']
 
 def get_value_with_fallback(key):
     if request.form.get(key):
@@ -54,7 +55,7 @@ def home():
             }
         print ('POST -- sessionObj=', sessionObj)        
         session['sessionObj'] = sessionObj
-        return redirect(url_for('home'))
+        return redirect(url_for('home')) # GET Method
 
     # no cookies used
     if session.get('sessionObj') is None:
@@ -78,12 +79,11 @@ def home():
                                currency_from=currency_from,
                                currency_to=currency_to, 
                                rate=rate, 
-                               currencies=sorted(currencies))
+                               currencies=sorted(CURRENCIES))
     return response
 
 
 def get_rate(frm, to):
-    print ("get_rate ")
     all_currency = urllib.request.urlopen(CURRENCY_URL).read()
     parsed = json.loads(all_currency.decode('utf-8')).get('rates')
     frm_rate = parsed.get(frm.upper())
@@ -92,13 +92,11 @@ def get_rate(frm, to):
 
 
 def get_news(publication):
-    print ("get_news ")
     feed = feedparser.parse(RSS_FEEDS[publication.lower()])
     return feed['entries']
 
 
 def get_weather(query):
-    print ("get_weather ")
     query = urllib.parse.quote(query)
     url = WEATHER_URL.format(query)
     data = urllib.request.urlopen(url).read()

@@ -1,5 +1,5 @@
 function getCsvData() {
-    const csv = `date,name,price
+  const csv = `date,name,price
 2018-09-03,KB금융,51300
 2018-09-03,KT,28900
 2018-09-03,KT&G,101500
@@ -750,5 +750,5 @@ function getCsvData() {
 2018-10-12,한국전력,24750
 2018-10-12,현대모비스,195500
 2018-10-12,현대차,115500`;
-    return csv;
+  return csv;
 }
