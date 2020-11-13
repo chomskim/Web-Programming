@@ -159,3 +159,22 @@ class DBHelper:
             return row_data_list
         finally:
             conn.close()
+
+    def queryTemplate(self):
+        conn = self.connect()
+        try:
+            query = "select code, name from jongmok_master;"
+            cursor = conn.cursor(buffered=True)
+            cursor.execute(query)
+    
+            table = {}
+            for row in cursor:
+                code = row[0]
+                name = row[1]
+                table[name] = code
+        except Exception as e:
+            print(e)    
+        finally:
+            conn.close()            
+
+        return table
