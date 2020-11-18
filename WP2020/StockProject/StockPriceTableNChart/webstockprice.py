@@ -52,7 +52,7 @@ def getprice(days=""):
     url = GETPRICE_URL.format(days)
     print (url, "<{}>".format(days))
     priceJson = urlopen(url).read().decode("utf-8")
-    #print (priceJson)
+    print (priceJson)
     
     priceDF = pd.read_json(priceJson, orient='split')
     headList = ['date'] + list(priceDF.columns)
