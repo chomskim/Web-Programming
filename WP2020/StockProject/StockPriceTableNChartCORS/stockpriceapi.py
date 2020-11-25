@@ -60,7 +60,8 @@ def getprice(days=""):
         row = [da.strftime('%Y-%m-%d')]+strpr_list
         rowList.append(row)
     
-    response = make_response(jsonify({ 'head':headList, 'rows':rowList }))
+    data = jsonify({ 'head':headList, 'rows':rowList })
+    response = make_response(data)
     response.headers['Access-Control-Allow-Origin'] = '*'
     return response
 

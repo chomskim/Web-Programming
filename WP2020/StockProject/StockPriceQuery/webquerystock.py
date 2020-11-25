@@ -51,4 +51,4 @@ def listprice():
     return render_template("list_price_tab.html", price_param=price_param, price_list=price_list)
 
 if __name__ == '__main__':
-    app.run(port=5005, debug=True)
+    app.run(port=5002, debug=True)

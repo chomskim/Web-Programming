@@ -17,6 +17,7 @@ from flask import url_for
 from flask import session
 from flask import jsonify
 from flask import make_response
+from flask import request
 
 import json
 import urllib.parse
@@ -44,8 +45,12 @@ GETPRICE_URL = "http://220.67.121.119/stockapi/getprice/{}"
 
 @app.route("/")
 def home():
+    print("--request.headers--")
+    print(request.headers)
     response = make_response(render_template("home.html", stockNames=utils.stockNames))
     response.headers['Access-Control-Allow-Origin'] = '*'
+    print("--response.headers--")
+    print(response.headers)
     return response
 
 @app.route("/getprice/")

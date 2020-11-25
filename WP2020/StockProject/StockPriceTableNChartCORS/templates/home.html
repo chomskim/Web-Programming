@@ -116,48 +116,45 @@
         }
       }
       function showTable() {
-        if (selList.length > 0) {
-          // http://220.67.121.119/stockapi/getprice/ CORS 문제
-          //var url = 'http://127.0.0.1:5001/getprice/' + gdays;
-          //var url = 'http://220.67.121.119/stockapi/getprice/' + gdays;
-          var url = 'http://127.0.0.1:5005/getprice/' + gdays;
+        if (selList.length === 0) return;
+        //var url = 'http://220.67.121.119/stockapi/getprice/' + gdays; // CORS 문제
+        //var url = 'http://127.0.0.1:5001/getprice/' + gdays; // CORS 아님
+        var url = 'http://127.0.0.1:5005/getprice/' + gdays; // CORS 사용
 
-          console.log(url);
-          $.getJSON(url, function (json) {
-            console.log(json);
-            let head = json.head;
-            let rows = json.rows;
-            //$('#priceTable').html('<div>' + JSON.stringify(json) + '</div>');
-            let tabHeadRow = '<td style="text-align:right;">date</td>';
-            let selCols = [];
-            for (let j = 0; j < head.length; j++) {
-              //console.log('head[j]=', head[j]);
-              if (selList.includes(head[j])) {
-                selCols.push(j);
-                tabHeadRow += '<td style="text-align:right;">' + head[j] + '</td>';
-              }
+        console.log(url);
+        $.getJSON(url, function (json) {
+          console.log(json);
+          let head = json.head;
+          let rows = json.rows;
+          //$('#priceTable').html('<div>' + JSON.stringify(json) + '</div>');
+          let tabHeadRow = '<td style="text-align:right;">date</td>';
+          let selCols = [];
+          for (let j = 0; j < head.length; j++) {
+            //console.log('head[j]=', head[j]);
+            if (selList.includes(head[j])) {
+              selCols.push(j);
+              tabHeadRow += '<td style="text-align:right;">' + head[j] + '</td>';
             }
-            console.log('tabHeadRow=', tabHeadRow);
-            $('#thead').append('<tr>' + tabHeadRow + '</tr>'); // using jQuery
+          }
+          console.log('tabHeadRow=', tabHeadRow);
+          $('#thead').html('<tr>' + tabHeadRow + '</tr>'); // using jQuery
 
-            // build Table Row
-            for (let i = 0; i < rows.length; i++) {
-              // row count
-              const da = rows[i][0];
+          // build Table Row
+          let tabRows = '';
+          for (let i = 0; i < rows.length; i++) {
+            // row count
+            const da = rows[i][0];
 
-              let tabrow = '<tr>' + '<td style="text-align:right;">' + da + '</td>';
-              for (let j = 0; j < selCols.length; j++) {
-                // col count
-                tabrow +=
-                  '<td style="text-align:right;">' +
-                  rows[i][selCols[j]] +
-                  '</td>';
-              }
-              tabrow += '</tr>';
-              $('#tbody').append(tabrow); // using jQuery
+            let tabrow = '<tr>' + '<td style="text-align:right;">' + da + '</td>';
+            for (let j = 0; j < selCols.length; j++) {
+              // col count
+              tabrow += '<td style="text-align:right;">' + rows[i][selCols[j]] + '</td>';
             }
-          });
-        }
+            tabrow += '</tr>';
+            tabRows += tabrow;
+          }
+          $('#tbody').html(tabRows); // using jQuery
+        });
       }
       function setDays() {
         console.log($('#days').val());
